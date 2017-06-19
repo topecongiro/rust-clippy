@@ -206,10 +206,34 @@ error: you should put `be_sure_we_got_to_the_end_of_it` between ticks in the doc
     |
     = note: `-D doc-markdown` implied by `-D warnings`
 
-error: you should put `http://www.unicode.org/reports/tr9/#Reordering_Resolved_Levels` between ticks in the documentation
+error: you should put bare URLs between `<`/`>` or make a proper Markdown link
    --> doc.rs:159:13
     |
-159 | /// Not ok: http://www.unicode.org/reports/tr9/#Reordering_Resolved_Levels
+159 | /// Not ok: http://www.unicode.org
+    |             ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `-D doc-markdown` implied by `-D warnings`
+
+error: you should put bare URLs between `<`/`>` or make a proper Markdown link
+   --> doc.rs:160:13
+    |
+160 | /// Not ok: https://www.unicode.org
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `-D doc-markdown` implied by `-D warnings`
+
+error: you should put bare URLs between `<`/`>` or make a proper Markdown link
+   --> doc.rs:161:13
+    |
+161 | /// Not ok: http://www.unicode.org/
+    |             ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `-D doc-markdown` implied by `-D warnings`
+
+error: you should put bare URLs between `<`/`>` or make a proper Markdown link
+   --> doc.rs:162:13
+    |
+162 | /// Not ok: http://www.unicode.org/reports/tr9/#Reordering_Resolved_Levels
     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
     = note: `-D doc-markdown` implied by `-D warnings`
