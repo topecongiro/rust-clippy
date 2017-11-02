@@ -125,8 +125,8 @@ pub fn match_def_path(tcx: TyCtxt, def_id: DefId, path: &[&str]) -> bool {
 
     tcx.push_item_path(&mut apb, def_id);
 
-    apb.names.len() == path.len() &&
-        apb.names
+    apb.names.len() == path.len()
+        && apb.names
             .into_iter()
             .zip(path.iter())
             .all(|(a, &b)| *a == *b)
@@ -201,8 +201,8 @@ pub fn match_qpath(path: &QPath, segments: &[&str]) -> bool {
         QPath::Resolved(_, ref path) => match_path(path, segments),
         QPath::TypeRelative(ref ty, ref segment) => match ty.node {
             TyPath(ref inner_path) => {
-                !segments.is_empty() && match_qpath(inner_path, &segments[..(segments.len() - 1)]) &&
-                    segment.name == segments[segments.len() - 1]
+                !segments.is_empty() && match_qpath(inner_path, &segments[..(segments.len() - 1)])
+                    && segment.name == segments[segments.len() - 1]
             },
             _ => false,
         },
@@ -233,7 +233,6 @@ pub fn match_path_ast(path: &ast::Path, segments: &[&str]) -> bool {
 
 /// Get the definition associated to a path.
 pub fn path_to_def(cx: &LateContext, path: &[&str]) -> Option<def::Def> {
-
     let crates = cx.tcx.crates();
     let krate = crates
         .iter()
@@ -269,7 +268,11 @@ pub fn path_to_def(cx: &LateContext, path: &[&str]) -> Option<def::Def> {
 }
 
 pub fn const_to_u64(c: &ty::Const) -> u64 {
-    c.val.to_const_int().expect("eddyb says this works").to_u64().expect("see previous expect")
+    c.val
+        .to_const_int()
+        .expect("eddyb says this works")
+        .to_u64()
+        .expect("see previous expect")
 }
 
 /// Convenience function to get the `DefId` of a trait by path.
@@ -598,7 +601,9 @@ pub fn span_lint_and_sugg<'a, 'tcx: 'a, T: LintContext<'tcx>>(
     help: &str,
     sugg: String,
 ) {
-    span_lint_and_then(cx, lint, sp, msg, |db| { db.span_suggestion(sp, help, sugg); });
+    span_lint_and_then(cx, lint, sp, msg, |db| {
+        db.span_suggestion(sp, help, sugg);
+    });
 }
 
 /// Create a suggestion made from several `span → replacement`.
@@ -609,7 +614,7 @@ pub fn span_lint_and_sugg<'a, 'tcx: 'a, T: LintContext<'tcx>>(
 /// the whole suggestion.
 pub fn multispan_sugg<I>(db: &mut DiagnosticBuilder, help_msg: String, sugg: I)
 where
-    I: IntoIterator<Item=(Span, String)>,
+    I: IntoIterator<Item = (Span, String)>,
 {
     let sugg = rustc_errors::CodeSuggestion {
         substitution_parts: sugg.into_iter()
@@ -629,9 +634,8 @@ where
 /// Return the base type for HIR references and pointers.
 pub fn walk_ptrs_hir_ty(ty: &hir::Ty) -> &hir::Ty {
     match ty.node {
-        TyPtr(ref mut_ty) |
-        TyRptr(_, ref mut_ty) => walk_ptrs_hir_ty(&mut_ty.ty),
-        _ => ty
+        TyPtr(ref mut_ty) | TyRptr(_, ref mut_ty) => walk_ptrs_hir_ty(&mut_ty.ty),
+        _ => ty,
     }
 }
 

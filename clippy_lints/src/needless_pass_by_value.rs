@@ -109,7 +109,8 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for NeedlessPassByValue {
         } = {
             let mut ctx = MovedVariablesCtxt::new(cx);
             let region_scope_tree = &cx.tcx.region_scope_tree(fn_def_id);
-            euv::ExprUseVisitor::new(&mut ctx, cx.tcx, cx.param_env, region_scope_tree, cx.tables, None).consume_body(body);
+            euv::ExprUseVisitor::new(&mut ctx, cx.tcx, cx.param_env, region_scope_tree, cx.tables, None)
+                .consume_body(body);
             ctx
         };
 
@@ -163,7 +164,7 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for NeedlessPassByValue {
                     if mode == BindingAnnotation::Mutable || mode == BindingAnnotation::RefMut {
                         continue;
                     }
-    
+
                     // Dereference suggestion
                     let sugg = |db: &mut DiagnosticBuilder| {
                         let deref_span = spans_need_deref.get(&canonical_id);
@@ -181,7 +182,7 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for NeedlessPassByValue {
                                 db.span_suggestion(input.span,
                                                 "consider changing the type to",
                                                 slice_ty);
-        
+
                                 for (span, suggestion) in clone_spans {
                                     db.span_suggestion(
                                         span,
@@ -193,18 +194,18 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for NeedlessPassByValue {
                                         suggestion.into()
                                     );
                                 }
-        
+
                                 // cannot be destructured, no need for `*` suggestion
                                 assert!(deref_span.is_none());
                                 return;
                             }
                         }
-    
+
                         if match_type(cx, ty, &paths::STRING) {
                             if let Some(clone_spans) =
                                 get_spans(cx, Some(body.id()), idx, &[("clone", ".to_string()"), ("as_str", "")]) {
                                 db.span_suggestion(input.span, "consider changing the type to", "&str".to_string());
-    
+
                                 for (span, suggestion) in clone_spans {
                                     db.span_suggestion(
                                         span,
@@ -216,14 +217,14 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for NeedlessPassByValue {
                                         suggestion.into(),
                                     );
                                 }
-    
+
                                 assert!(deref_span.is_none());
                                 return;
                             }
                         }
-    
+
                         let mut spans = vec![(input.span, format!("&{}", snippet(cx, input.span, "_")))];
-    
+
                         // Suggests adding `*` to dereference the added reference.
                         if let Some(deref_span) = deref_span {
                             spans.extend(
@@ -236,7 +237,7 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for NeedlessPassByValue {
                         }
                         multispan_sugg(db, "consider taking a reference instead".to_string(), spans);
                     };
-    
+
                     span_lint_and_then(
                         cx,
                         NEEDLESS_PASS_BY_VALUE,
